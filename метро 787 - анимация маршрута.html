@@ -24,7 +24,7 @@
 <div id="map"></div>
 <div class="hud" id="hud"><div class="clock" id="clock">05:31</div><div class="cnt"><b id="cnt">0</b> станций · <span id="elapsed" class="ln"></span></div>
 <div class="st"><i></i><span id="stname">—</span></div><div class="ln" id="lnname"></div><img id="pic" alt=""></div>
-<div class="ctl"><button id="play" class="on">Пауза</button><input type="range" id="seek" min="0" max="1000" value="0">
+<div class="ctl"><button id="play">Пуск</button><input type="range" id="seek" min="0" max="1000" value="0">
 <label>скорость <select id="spd"><option value="60">1 с = 1 мин</option><option value="120" selected>1 с = 2 мин</option><option value="300">1 с = 5 мин</option><option value="600">1 с = 10 мин</option></select></label>
 <label><input type="checkbox" id="skip" checked> сжимать перерывы</label><label><input type="checkbox" id="follow" checked> следить за точкой</label><label><input type="checkbox" id="tilt"> наклон</label><button id="restart">Сначала</button></div>
 <script>/**
@@ -98,7 +98,7 @@ const GAPMAX=300; let comp=[];
 function buildComp(skip){comp=[];let acc=0;for(let i=0;i<TR.length;i++){if(i){let d=TR[i].t-TR[i-1].t;if(skip&&TR[i].st===TR[i-1].st&&d>GAPMAX)d=GAPMAX;acc+=d}comp.push(acc)}}
 buildComp(true);
 const toReal=c=>{let i=comp.findIndex(x=>x>c);if(i<0)return T1;if(i===0)return T0;const f=(c-comp[i-1])/(comp[i]-comp[i-1]||1);return TR[i-1].t+f*(TR[i].t-TR[i-1].t)};
-let map, ready=false, cur=0, playing=true, lastTs=null;
+let map, ready=false, cur=0, playing=false, lastTs=null;   // старт только по кнопке
 const hud=document.getElementById('hud'),clock=document.getElementById('clock'),cnt=document.getElementById('cnt'),stn=document.getElementById('stname'),lnn=document.getElementById('lnname'),pic=document.getElementById('pic'),seek=document.getElementById('seek'),el=document.getElementById('elapsed');
 const seen=new Set();
 function start(style){
