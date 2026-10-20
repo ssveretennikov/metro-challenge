@@ -122,13 +122,13 @@ function start(style){
   ready=true;render(0)});
 }
 let trailFeatures=[], visitedFeatures=[], lastIdx=-1;
-function render(c){const t=toReal(c);let i=TR.findIndex(p=>p.t>t);if(i<0)i=TR.length-1;if(i===0)i=1;const a=TR[i-1],b=TR[i];const f=Math.min(1,Math.max(0,(t-a.t)/((b.t-a.t)||1)));
+function render(c){const t=toReal(c);const i0=TR.findIndex(p=>p.t>t);let i=i0;if(i<0)i=TR.length-1;if(i===0)i=1;const a=TR[i-1],b=TR[i];const f=Math.min(1,Math.max(0,(t-a.t)/((b.t-a.t)||1)));
  const lon=a.lon+(b.lon-a.lon)*f,lat=a.lat+(b.lat-a.lat)*f;const col=COL[b.ln]||'#fff';
  if(ready){
   // в самом конце трека последняя остановка тоже уже пройдена, иначе счётчик не дотягивает до итога на единицу
-  const lim=(i===TR.length-1&&f>=1)?i:i-1;
+  const lim=i0<0?TR.length-1:i-1;
   if(lim<lastIdx){trailFeatures=[];visitedFeatures=[];seen.clear();lastIdx=-1}
-  for(let k=Math.max(1,lastIdx+1);k<=lim;k++){const p=TR[k-1],q=TR[k];
+  for(let k=Math.max(0,lastIdx+1);k<=lim;k++){const p=TR[Math.max(0,k-1)],q=TR[k];
    if(p.lon!==q.lon||p.lat!==q.lat)trailFeatures.push({type:'Feature',properties:{c:COL[q.ln]||'#fff',sf:!!q.sf},geometry:{type:'LineString',coordinates:[[p.lon,p.lat],[q.lon,q.lat]]}});
    if(q.stop&&!seen.has(q.st)){seen.add(q.st);visitedFeatures.push({type:'Feature',properties:{c:COL[q.ln]||'#fff'},geometry:{type:'Point',coordinates:[q.lon,q.lat]}})}}
   if(lastIdx!==lim){map.getSource('trail').setData({type:'FeatureCollection',features:trailFeatures});map.getSource('visited').setData({type:'FeatureCollection',features:visitedFeatures});map.setPaintProperty('dot','circle-stroke-color',col);lastIdx=lim}
